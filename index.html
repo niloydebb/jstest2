@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-Sliding Video Background Carousel</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+
+
+
+        .container {
+            width: 1200px;
+           
+            margin: 100px auto;
+            padding: 0 0 100px 0;
+        }
+
+        .carousel {
+            position: relative;
+            height: 70vh;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .i_par {
+              
+              width: 24%;
+              padding: 20px 0px 0px 30px;
+            
+             }
+
+        .i_par p{
+            font-size: 18px;
+            color: #fff;
+        }     
+
+        .carousel video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .carousel-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            z-index: 1;
+            opacity: 0;
+        }
+
+        .carousel-content h1 {
+            font-size: 42px;
+            margin: 0;
+        }
+
+        .carousel-content p {
+            font-size: 16px;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #80808061;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .carousel-nav button {
+            background-color: transparent;
+            color: #fff;
+            border: none;
+            padding: 15px;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 1.5s ease;
+        }
+
+        .carousel-nav button.active {
+            color: #000;
+            background-color: #fff;
+        }
+
+        /* Example animations */
+        @keyframes slideInUp {
+            0% { opacity: 0; transform: translateY(50%); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* CSS classes for the animations */
+        .animate-slideInLeft {
+            animation: slideInUp 1s ease-out forwards;
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .animate-zoomIn {
+            animation: zoomIn 1s ease-out forwards;
+        }
+
+        .carousel-content {
+            opacity: 0; /* Start with opacity 0, will be animated to 1 */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="carousel">
+            <div class="i_par">
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquid, consectetur?</p>
+            </div>
+      
+            <video id="video2" autoplay muted loop>
+                <source src="video1.mp4" type="video/mp4">
+           </video>
+    
+    
+            <video id="video2" autoplay muted loop>
+                <source src="video4.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <video id="video3" autoplay muted loop>
+                <source src="video5.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        
+            <div class="carousel-content">
+                <h1 id="carousel-title">Inference Service</h1>
+                <p id="carousel-description">Provides super AI inference seamlessly, scales across thousands of AI to emerging domains.</p>
+            </div>
+           
+    
+    
+            <div class="carousel-nav">
+                <button onclick="goToSlide(0)" id="nav0" data-position-top="50%" data-position-left="2%" data-text-align="left" data-animation="animate-slideInLeft">Machine Learning</button>
+                <button onclick="goToSlide(1)" id="nav1" data-position-top="50%" data-position-left="48%" data-text-align="left" data-animation="animate-fadeIn">Data Analysis</button>
+                <button onclick="goToSlide(2)" id="nav2" data-position-top="50%" data-position-left="40%" data-text-align="right" data-animation="animate-zoomIn">Robotics</button>
+                <button onclick="goToSlide(3)" id="nav3" data-position-top="70%" data-position-left="70%" data-text-align="right" data-animation="animate-slideInLeft">Web Development</button>
+            </div>
+            <!-- <div class="carousel-nav">
+                <button onclick="goToSlide(0)" id="nav0">Machine Learning</button>
+                <button onclick="goToSlide(1)" id="nav1">Data Analysis</button>
+                <button onclick="goToSlide(2)" id="nav2">Robotics</button>
+                <button onclick="goToSlide(3)" id="nav2">Web Development</button>
+            </div> -->
+        </div>
+    
+        
+    </div>
+
+<script>
+  const videos = document.querySelectorAll('.carousel video');
+const titles = ["Inference Service", "Pixel Streaming", "VFX & Rendering"];
+const descriptions = [
+    "Provides super AI inference seamlessly, scales across thousands of AI to emerging domains.",
+    "High-quality pixel streaming for various applications.",
+    "Advanced visual effects and rendering capabilities."
+];
+
+let currentSlide = 0;
+const slideInterval = 5000; // 5 seconds
+let autoSlideInterval;
+
+function showSlide(index) {
+    // First, animate the current text out
+    const carouselContent = document.querySelector('.carousel-content');
+    carouselContent.style.opacity = '0';
+    
+    // Wait for the fade-out animation to complete before changing content
+    setTimeout(() => {
+        // Handle video transitions
+        videos.forEach((video, i) => {
+            video.style.opacity = i === index ? '1' : '0';
+        });
+
+        // Update title and description
+        document.getElementById('carousel-title').textContent = titles[index];
+        document.getElementById('carousel-description').textContent = descriptions[index];
+
+        // Adjust position, style, and animation of the content
+        const activeButton = document.getElementById('nav' + index);
+        const positionTop = activeButton.getAttribute('data-position-top');
+        const positionLeft = activeButton.getAttribute('data-position-left');
+        const textAlign = activeButton.getAttribute('data-text-align');
+        const animationClass = activeButton.getAttribute('data-animation');
+
+        // Reset previous animation class
+        carouselContent.className = 'carousel-content';
+
+        // Apply the new styles
+        carouselContent.style.top = positionTop;
+        carouselContent.style.left = positionLeft;
+        carouselContent.style.textAlign = textAlign || 'center';
+
+        // Apply the new animation class
+        carouselContent.classList.add(animationClass);
+
+        // Now, animate the new text in
+        carouselContent.style.opacity = '1';
+
+        // Update navigation button styles
+        updateNavButtons(index);
+    }, 500); // 500ms matches the duration of the fade-out animation
+}
+
+function updateNavButtons(index) {
+    const buttons = document.querySelectorAll('.carousel-nav button');
+    buttons.forEach((button, i) => {
+        button.classList.toggle('active', i === index);
+    });
+}
+
+function goToSlide(index) {
+    currentSlide = index;
+    showSlide(currentSlide);
+    resetAutoSlide();
+}
+
+function nextSlide() {
+    currentSlide = (currentSlide + 1) % videos.length;
+    showSlide(currentSlide);
+}
+
+function resetAutoSlide() {
+    clearInterval(autoSlideInterval);
+    autoSlideInterval = setInterval(nextSlide, slideInterval);
+}
+
+// Initialize the carousel
+showSlide(currentSlide);
+autoSlideInterval = setInterval(nextSlide, slideInterval);
+
+</script>
+
+</body>
+</html>
